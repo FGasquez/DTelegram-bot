@@ -20,7 +20,7 @@ class TelegramApi
 
 	/**
 	*
-	* @param string $chat_id identification of chat to send the message
+	* @param string $chat_id identifier of chat to send the message
 	* @param string $msg message to send
 	* @param string $parse_mode 
 	*/
@@ -39,7 +39,7 @@ class TelegramApi
 
 	/**
 	*
-	* @param string $chat_id identification of chat to send the message
+	* @param string $chat_id identifier of chat to send the message
 	* @param string $photo_url url of image to send
 	*/
 	function sendPhoto($chat_id, $photo_url)
@@ -56,7 +56,7 @@ class TelegramApi
 
 	/**
 	*
-	* @param string $chat_id identification of chat to send the message
+	* @param string $chat_id identifier of chat to send the message
 	* @param string $audio url of audio to send
 	*/
 	function sendAudio($chat_id, $audio_url)
@@ -70,5 +70,20 @@ class TelegramApi
 		return json_decode($response, false);
 	}
 
+	/**
+	*
+	* @param string $inline_id identifier of inline query to answer
+	* @param array $elems elements to send
+	*/
+	function answerInlineQuery($inline_id, $elems = [])
+	{
+		$query = http_build_query([
+			"inline_query_id" => $inline_id,
+			"results" => json_encode($elems),
+		]);
+
+		$response = file_get_contents($this->api_url . '/answerInlineQuery?' . $query);
+		return json_decode($response);
+	}
 
 }
