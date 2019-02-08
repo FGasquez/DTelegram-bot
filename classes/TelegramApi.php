@@ -22,7 +22,7 @@ class TelegramApi
 	 *
 	 * @param string $chat_id identifier of chat to send the message
 	 * @param string $msg message to send
-	 * @param string $parse_mode 
+	 * @param string $parse_mode Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the message.
 	 */
 	public function sendMessage($chat_id, $msg, $parse_mode = 'Markdown')
 	{
@@ -73,12 +73,16 @@ class TelegramApi
 	 *
 	 * @param string $chat_id identifier of chat to send the message
 	 * @param string $photo_url url of image to send
+	 * @param string $caption Photo caption 0-1024 characters
+	 * @param string $parse_mode Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
 	 */
-	public function sendPhoto($chat_id, $photo_url)
+	public function sendPhoto($chat_id, $photo_url, $caption = '', $parse_mode = 'markdown')
 	{
 		$query = http_build_query([
 			'chat_id' => $chat_id,
 			'photo' => $photo_url,
+			'caption' => $caption,
+			'parse_mode' => $parse_mode
 		]);
 		
 		//The bot warns that it is sending a photo
@@ -92,12 +96,16 @@ class TelegramApi
 	 *
 	 * @param string $chat_id identifier of chat to send the message
 	 * @param string $audio url of audio to send
+	 * @param string $caption Photo caption 0-1024 characters
+	 * @param string $parse_mode Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
 	 */
-	public function sendAudio($chat_id, $audio_url)
+	public function sendAudio($chat_id, $audio_url, $caption = '', $parse_mode = 'markdown')
 	{
 		$query = http_build_query([
 			'chat_id' => $chat_id,
 			'audio' => $audio_url,
+			'caption' => $caption,
+			'parse_mode' => $parse_mode
 		]);
 
 		//The bot warns that it is sending an audio

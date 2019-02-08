@@ -15,10 +15,10 @@
 		$api->sendMessage($chat_id, 'OK!');
 
 		$image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/2000px-Telegram_logo.svg.png';
-		$api->sendPhoto($chat_id, $image);
+		$api->sendPhoto($chat_id, $image, 'Image text');
 
 		$audio = 'https://www.drogui.ml/sounds/fideos.mp3';
-		$api->sendAudio($chat_id, $audio);
+		$api->sendAudio($chat_id, $audio, 'Audio test');
 	}
 	
 	if(isset($request->inline_query))
