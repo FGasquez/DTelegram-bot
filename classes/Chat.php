@@ -204,6 +204,11 @@ class Chat
             $this->api->sendSticker($this->getChatId(), $sticker, $options);
         }
 
+        function forwardMessageTo($chat_id)
+        {
+            $this->api->forwardMessage($chat_id, $this->getChatId(), $this->getMessageId());
+        }
+
         //this method only works when contains a callbackData
         function editMessage($text, $options = [])
         {

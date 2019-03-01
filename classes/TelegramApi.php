@@ -249,7 +249,7 @@ class TelegramApi
 			'message_id' => $message_id
 		];
 
-		$this->execute('forwardMessage' . $q);
+		$this->execute('forwardMessage' , $q);
 	}
 
 }
