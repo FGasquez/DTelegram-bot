@@ -51,13 +51,13 @@
                     'inline_keyboard' => [
                         [
                             [
-                                    'text' => 'Google',
-                                    'url' => 'http://google.com/'
+                                'text' => 'Google',
+                                'url' => 'http://google.com/'
                             ],
                             [
-                                    'text' => 'btn2',
-                                    'callback_data' => '/t2'
-                             ],
+                                'text' => 'btn2',
+                                'callback_data' => '/t2'
+                            ],
                         ]
                     ],
                     'one_time_keyboard' => True
