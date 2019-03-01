@@ -11,7 +11,7 @@ class Chat
         private $sticker;
         private $type;
         private $forward;
-        private $callbackData;
+        private $callbackData = false;
         
         function __construct($api)
         {
@@ -26,12 +26,7 @@ class Chat
             if(isset($request->callback_query)){
                 $this->callbackData = $request->callback_query->data;
                 $this->message = $request->callback_query->message;
-            }else{
-                $this->callbackData = False;
             }
-            
-                //$this->api->sendMessage('204144907', $json, ['parsemode' => 'html']);
-
         }
 
         function isCallback()
