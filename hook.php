@@ -38,12 +38,12 @@
     //if receive a sticker, return a random sticker from same sitckerSet
     $bot->do(function($c, $a){
         if($c->isPrivate() && $c->containSticker()){
-            $c->reply($c->getStickerName());
-            $stickers = $a->getStickerSet($c->getStickerName());
+            $c->reply('StickerSet name: ' . $c->getStickerName());
+			$stickers = $a->getStickerSet($c->getStickerName());
             $rSticker = array_rand($stickers['result']['stickers']);
             $c->replySticker($stickers['result']['stickers'][$rSticker]['file_id']);
         }
-    });
+    }, false);
 
 
     $bot->bus('/testKeyboard', function($c, $a){

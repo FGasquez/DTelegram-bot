@@ -227,7 +227,7 @@ class TelegramApi
 	public function getStickerSet($name)
 	{
 		//$response = file_get_contents($this->api_url . 'getStickerSet?name=' . $name);
-		return json_decode($this->execute('getStickerSet?name='.$name), true);
+		return json_decode($this->execute('getStickerSet',['name'=>$name]), true);
 	}
 
 	public function getMe()
