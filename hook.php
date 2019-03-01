@@ -47,21 +47,21 @@
 
 
 	$bot->bus('/testKeyboard', function($c, $a){
-		$keyboard = array(
-			'inline_keyboard' => array(
-				array(
-					array(
-							'text' => 'btn1',
-							'url' => 'http://google.com/'
-						),
-					array(
-							'text' => 'btn2',
-							'callback_data' => '/t2'
-						),
-					)
-				),
-				'one_time_keyboard' => True
-			);
+		$keyboard = [
+					'inline_keyboard' => [
+						[
+							[
+									'text' => 'Google',
+									'url' => 'http://google.com/'
+								],
+							[
+									'text' => 'btn2',
+									'callback_data' => '/t2'
+								],
+							]
+						],
+						'one_time_keyboard' => True
+					];
 		$c->reply('Test Keyboard', ['reply_markup' => json_encode($keyboard)]);
 
 	});
