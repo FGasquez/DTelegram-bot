@@ -53,15 +53,15 @@
                             [
                                     'text' => 'Google',
                                     'url' => 'http://google.com/'
-                                ],
+                            ],
                             [
                                     'text' => 'btn2',
                                     'callback_data' => '/t2'
-                                ],
-                            ]
-                        ],
-                        'one_time_keyboard' => True
-                    ];
+                             ],
+                        ]
+                    ],
+                    'one_time_keyboard' => True
+                ];
         $c->reply('Test Keyboard', ['reply_markup' => json_encode($keyboard)]);
 
     });
