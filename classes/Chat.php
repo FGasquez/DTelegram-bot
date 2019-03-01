@@ -204,6 +204,14 @@ class Chat
             $this->api->sendSticker($this->getChatId(), $sticker, $options);
         }
 
+        //this method only works when contains a callbackData
+        function editMessage($text, $options = [])
+        {
+            if($this->isCallback()){
+                $this->api->editMessageText($this->getChatId(), $this->getMessageId(), $text, $options);
+            }
+        }
+        
         function inlineReply($r)
         {
             $this->api->answerInlineQuery($this->getChatId(), $r);

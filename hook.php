@@ -69,6 +69,8 @@
 
     $bot->bus('/t2', function($c, $a){
         if($c->isCallback()){
+            //delete keyboard
+            $c->editMessage($c->getText(), ['reply_markup' => Null]);
             $c->reply('Button pressed');
         }else{
             $c->reply('Nothing to do here...');
