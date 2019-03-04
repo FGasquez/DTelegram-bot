@@ -19,14 +19,15 @@ class Chat
             
             $json = file_get_contents("php://input");
             $request = json_decode($json, $assoc=false);
-            $this->message = $request->message;
-            $this->inlineQuery = (!isset($request->inline_query))? False : $request->inline_query; 
-            $this->sticker = (!isset($request->message->sticker))? False : $request->message->sticker;
-            $this->forward =(!isset($request->message->forward_from))? False: $request->message->forward_from;
             if(isset($request->callback_query)){
                 $this->callbackData = $request->callback_query->data;
                 $this->message = $request->callback_query->message;
+            }else{
+                $this->message = $request->message;
             }
+            $this->inlineQuery = (!isset($request->inline_query))? False : $request->inline_query; 
+            $this->sticker = (!isset($request->message->sticker))? False : $request->message->sticker;
+            $this->forward = (!isset($request->message->forward_from))? False: $request->message->forward_from;
         }
 
         function isCallback()
@@ -168,9 +169,14 @@ class Chat
             return $this->callbackData;
         }
 
+        function getCommand()
+        {
+            return ($this->isCallback()) ? $this->getCallbackData() : $this->getText();
+        }
+
         function evalCommand($c)
         {
-            $text = ($this->isCallback()) ? $this->getCallbackData() : $this->getText();
+            $text = $this->getCommand();
             return (($text == $c) || (preg_match($c,$text)));
         }
 
@@ -215,6 +221,11 @@ class Chat
             if($this->isCallback()){
                 $this->api->editMessageText($this->getChatId(), $this->getMessageId(), $text, $options);
             }
+        }
+
+        function forceCommand($text)
+        {
+            ($this->isCallback()) ? $this->callbackData = $text : $this->message->text = $text; 
         }
         
         function inlineReply($r)
