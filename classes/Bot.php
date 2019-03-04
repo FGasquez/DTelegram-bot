@@ -11,7 +11,7 @@ class Bot
     private $token;
     private $api;
     private $chat;
-    private $commandFound = false;
+    private $commandExecuted = false;
     private $ended = false;
 
     function __construct($token)
@@ -32,25 +32,22 @@ class Bot
         return $this->api;
     }
 
-    function bus($command, $f)
+    function do ($f)
     {
         if(!$this->ended){
-            
-            if($this->chat->evalCommand($command))
-            {
-                $this->commandFound = true;
-                $f($this->chat, $this->api);
-            }
+            $this->commandExecuted = (($f($this->chat, $this->api)) === False && !$this->commandExecuted) ? False : True;
         }
     }
 
-    function do ($f, $silent = true)
-    {
-        if(!$this->ended){
-            $f($this->chat, $this->api);
-            ($silent)?:$this->commandFound = true;
-        }
+
+    function bus($command, $f)
+    {            
+            if($this->chat->evalCommand($command))
+            {
+                $this->do($f);
+            }
     }
+
 
     function inlineReply($iReply)
     {
@@ -61,7 +58,7 @@ class Bot
 
     function close($f)
     {
-        if(!$this->commandFound)
+        if(!$this->commandExecuted)
         {
             $f($this->chat, $this->api);
         }

@@ -23,6 +23,21 @@
 
     }
 
+// Example of use silent functions
+    $bot->bus('/t1', function ($c, $a){
+        $c->reply('Test silent');
+        return False;
+    });
+
+    $bot->bus('/t2', function($c, $a){
+        $c->reply('test forcing true');
+        return true;
+    });
+
+    $bot->bus('/t3', function($c, $a){
+        $c->reply('test lazy');
+    });
+// ------------------------------------
     $bot->bus('/test', test);
     
     //return ID and Usermane from sender
@@ -43,7 +58,8 @@
             $rSticker = array_rand($stickers['result']['stickers']);
             $c->replySticker($stickers['result']['stickers'][$rSticker]['file_id']);
         }
-    }, false);
+        return false;
+    });
 
 
     $bot->bus('/testKeyboard', function($c, $a){
