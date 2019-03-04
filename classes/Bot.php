@@ -11,7 +11,7 @@ class Bot
     private $token;
     private $api;
     private $chat;
-    private $commandExecuted = false;
+    //private $commandExecuted = false;
     private $ended = false;
 
     function __construct($token)
@@ -34,15 +34,14 @@ class Bot
 
     function do ($f)
     {
-        if(!$this->ended){
-            $this->commandExecuted = (($f($this->chat, $this->api)) === False && !$this->commandExecuted) ? False : True;
-        }
+        $this->ended = (($f($this->chat, $this->api)) === False && !$this->ended) ? False : True;
+
     }
 
 
     function bus($command, $f)
     {            
-            if($this->chat->evalCommand($command))
+            if($this->chat->evalCommand($command) && !$this->ended)
             {
                 $this->do($f);
             }
@@ -58,7 +57,7 @@ class Bot
 
     function close($f)
     {
-        if(!$this->commandExecuted)
+        if(!$this->ended)
         {
             $f($this->chat, $this->api);
         }
