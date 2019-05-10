@@ -10,29 +10,36 @@ class TelegramApi
 	 * @var string $api_url
 	 */
 	private $api_url;
+	private $token;
 
 
 	function __construct($token)
 	{
-		$this->api_url = 'https://api.telegram.org/bot'.$token;
+		$this->token = $token;
+		$this->api_url = 'https://api.telegram.org/bot'.$token.'/';
 	}
 
+
+	public function execute($method, $params = [])
+	{
+		$query = http_build_query($params);
+		return file_get_contents($this->api_url . $method . '?' . $query);
+	}
 
 	/**
 	 *
 	 * @param string $chat_id identifier of chat to send the message
-	 * @param string $msg message to send
-	 * @param string $parse_mode Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the message.
+	 * @param string $text message to send
+	 * @param array $options Send the extra options from telegram bot api (parsemode, reply_markup, reply_to_message_id, etc).
 	 */
-	public function sendMessage($chat_id, $msg, $parse_mode = 'Markdown')
+	public function sendMessage($chat_id, $text, $options = [])
 	{
-		$query = http_build_query([
+		$q = array_merge([
 			'chat_id' => $chat_id,
-			'text' => $msg,
-			'parse_mode' => $parse_mode,
-		]);
+			'text' => $text,
+		], $options);
 
-		$response =  file_get_contents($this->api_url . '/sendMessage?' . $query);
+		$this->execute('sendMessage', $q);
 	}
 
 	/**
@@ -42,12 +49,12 @@ class TelegramApi
 	 */
 	public function deleteMessage($chat_id, $message_id)
 	{
-		$query = http_build_query([
+		$q = [
 			'chat_id' => $chat_id,
 			'message_id' => $message_id
-		]);
+		];
 
-		$response =  file_get_contents($this->api_url . '/deleteMessage?' . $query);
+		$this->execute('deleteMessage'.$q);
 	}
 
 	/**
@@ -58,37 +65,70 @@ class TelegramApi
 	 * @param string $text
 	 * 
 	 */
-	public function editMessageText($chat_id, $message_id, $text)
+	public function editMessageText($chat_id, $message_id, $text, $options)
 	{
-		$query = http_build_query([
+		$q = array_merge([
 			'chat_id' => $chat_id,
 			'message_id' => $message_id,
 			'text' => $text
-		]);
+		], $options);
 
-		$response = file_get_contents($this->api_url . '/editMessageText?' . $query);
+		$this->execute('editMessageText', $q);
 	}
 
 	/**
 	 *
 	 * @param string $chat_id identifier of chat to send the message
 	 * @param string $photo_url url of image to send
-	 * @param string $caption Photo caption 0-1024 characters
-	 * @param string $parse_mode Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
+	 * @param array  $options send the extra options from telegram bot api (parsemode, caption, reply_to_message_id, etc).
 	 */
-	public function sendPhoto($chat_id, $photo_url, $caption = '', $parse_mode = 'markdown')
+	public function sendPhoto($chat_id, $photo_url, $caption = '', $options = [])
 	{
-		$query = http_build_query([
+		$q = array_merge([
 			'chat_id' => $chat_id,
 			'photo' => $photo_url,
-			'caption' => $caption,
-			'parse_mode' => $parse_mode
-		]);
+			'caption' => $caption
+		], $options);
 		
 		//The bot warns that it is sending a photo
-		file_get_contents($this->api_url.'/sendChatAction?chat_id=' . $chat_id . '&action=upload_photo');
-		//The bot sends the photo
-		$response =  file_get_contents($this->api_url . '/sendPhoto?' . $query);
+		$this->sendChatAction($chat_id, 'upload_photo');
+
+		$this->execute('sendPhoto', $q);
+	}
+
+	/**
+	 *
+	 * @param string $chat_id identifier of chat to send the message
+	 * @param string $video_url url of image to send
+	 * @param array  $options send the extra options from telegram bot api (parsemode, caption, reply_to_message_id, etc).
+ 	 */
+	public function sendVideo($chat_id, $video_url, $caption = '', $options = [])
+	{
+		$q = array_merge([
+			'chat_id' => $chat_id,
+			'video' => $video_url,
+			'caption' => $caption
+		], $options);
+		
+		//The bot warns that it is sending a photo
+		$this->sendChatAction($chat_id, 'upload_video');
+
+		$this->execute('sendVideo', $q);
+	}
+
+	/**
+	 * 
+	 * @param string $chat_id identifier of chat to send the message
+	 * @param string $sticker file_id or pass an HTTP URL as a String for Telegram to get a .webp file from the Internet
+	 */
+	function sendSticker($chat_id, $sticker, $options = [])
+	{
+		$q = array_merge([
+			'chat_id' => $chat_id,
+			'sticker' => $sticker
+		], $options);
+
+		$this->execute('sendSticker', $q);
 	}
 
 
@@ -96,22 +136,53 @@ class TelegramApi
 	 *
 	 * @param string $chat_id identifier of chat to send the message
 	 * @param string $audio url of audio to send
-	 * @param string $caption Photo caption 0-1024 characters
-	 * @param string $parse_mode Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
+	 * @param array  $options send the extra options from telegram bot api (parsemode, caption, reply_to_message_id, etc).
 	 */
-	public function sendAudio($chat_id, $audio_url, $caption = '', $parse_mode = 'markdown')
+	public function sendAudio($chat_id, $audio_url, $caption = '', $options = [])
 	{
-		$query = http_build_query([
+		$q = array_merge([
 			'chat_id' => $chat_id,
 			'audio' => $audio_url,
-			'caption' => $caption,
-			'parse_mode' => $parse_mode
-		]);
+			'caption' => $caption
+		], $options);
 
 		//The bot warns that it is sending an audio
-		file_get_contents($this->api_url.'/sendChatAction?chat_id=' . $chat_id . '&action=upload_audio');
-		//The bot sends the audio
-		$response =  file_get_contents($this->api_url . '/sendAudio?' . $query);
+		$this->sendChatAction($chat_id, 'upload_audio');
+
+		$this->execute('sendAudio', $q);
+	}
+
+	/**
+	 *
+	 * @param string $chat_id identifier of chat to send the message
+	 * @param string $audio url of audio to send
+	 * @param array  $options send the extra options from telegram bot api (parsemode, caption, reply_to_message_id, etc).
+	 */
+	public function sendDocument($chat_id, $doc_url, $options = [])
+	{
+		$q = array_merge([
+			'chat_id' => $chat_id,
+			'document' => $doc_url
+		], $options);
+
+		//The bot warns that it is sending an audio
+		$this->sendChatAction($chat_id, 'upload_document');
+
+		$this->execute('sendDocument', $q);
+	}
+
+	/**
+	 * 
+	 * @param string $chat_id identifier of chat to send the message
+	 * @param string $action 
+	 */
+	public function sendChatAction($chat_id, $action)
+	{
+		$q = [
+			'chat_id' => $chat_id,
+			'action' => $action
+		];
+		$this->execute('sendChatAction', $q);
 	}
 
 	/**
@@ -121,12 +192,13 @@ class TelegramApi
 	 */
 	public function answerInlineQuery($inline_id, $elems = [])
 	{
-		$query = http_build_query([
+		$q = [
 			"inline_query_id" => $inline_id,
 			"results" => json_encode($elems),
-		]);
+		];
 
-		$response = file_get_contents($this->api_url . '/answerInlineQuery?' . $query);
+		//$response = file_get_contents($this->api_url . 'answerInlineQuery?' . $query);
+		$this->execute('answerInlineQuery', $q);
 	}
 
 	/**
@@ -137,19 +209,47 @@ class TelegramApi
 	 * @param array $user_restriction array with restrictions to user
 	 */
 
-	public function ban($chat_id, $user_id, $until_date = NULL, $user_restrictions = [])
+	public function ban($chat_id, $user_id, $options = [])
 	{
-		$query = http_build_query([
+
+		$q = array_merge([
 			'chat_id' => $chat_id,
-			'user_id' => $user_id,
-			'until_date' => $until_date,
-			'can_send_messages' => $user_restrictions['can_send_messages'],
-			'can_send_media_messages' => $user_restrictions['can_send_media_messanges'],
-			'can_send_other_messages' => $user_restrictions['can_send_other_messages'],
-			'can_add_web_page_previews' => $user_restrictions['can_add_web_page_previews']
-		]);
-	  
-		$response = file_get_contents($this->api_url . '/restrictChatMember?' . $query);
+			'user_id' => $user_id
+		], $options);
+
+		$this->execute('restrictChatMember', $q);
+	}
+
+	/**
+	 * 
+	 * @param string $name identifier of sticker set
+	 */
+	public function getStickerSet($name)
+	{
+		//$response = file_get_contents($this->api_url . 'getStickerSet?name=' . $name);
+		return json_decode($this->execute('getStickerSet',['name'=>$name]), true);
+	}
+
+	public function getMe()
+	{
+		return json_decode($this->execute('getMe'), False);
+	}
+
+	/**
+	 * 
+	 * @param string $chat_id the identifier of the chat that will receive the message
+	 * @param string $from_chat_id the identifier of the chat from which the message is forwarded 
+	 * @param string $message_id the identifier of message to forward
+	 */
+	public function forwardMessage($chat_id, $from_chat_id, $message_id)
+	{
+		$q = [
+			'chat_id' => $chat_id,
+			'from_chat_id' => $from_chat_id,
+			'message_id' => $message_id
+		];
+
+		$this->execute('forwardMessage' , $q);
 	}
 
 }
